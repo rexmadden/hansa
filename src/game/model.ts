@@ -57,7 +57,7 @@ export type ActionParams<T extends ActionName> = T extends "place" | "displace"
   : T extends "marker-swap"
   ? { city: string; office: number }
   : T extends "marker-office"
-  ? { city: string }
+  ? { cityName: string }
   : never;
 
 export type Action = <T extends ActionName>(name: T, params?: ActionParams<T>) => void;
@@ -89,6 +89,7 @@ export type Office = {
 export type City = {
   name: string;
   offices: Office[];
+  bonusOffices: Office[];
   position: [number, number];
   upgrade?: Upgrade;
   color?: "red" | "yellow"; // For upgrade cities / arnheim-stendal route

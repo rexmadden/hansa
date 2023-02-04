@@ -13,6 +13,7 @@ import {
   totalPoints,
 } from "./helpers";
 import { defaultController, GameController, useController } from "./controller";
+import mapImg from 'public/map.jpeg';
 
 // Nice yellow: #EEBC1D
 const playerColor = (color: Color) => (color === "yellow" ? "#D4AF37" : color);
@@ -231,6 +232,7 @@ export const App = ({ gameId, playerId }: { gameId: string; playerId: string }) 
             }}
           >
             <g ref={groupRef} id="game" transform={`scale(${scale}, ${scale}) translate(${x},${y})`}>
+              {/* <image href={mapImg.src} transform={`scale(${scale}, ${scale}) translate(${x},${y})`} /> */}
               <CoellenBarrels x={map.coellen[0]} y={map.coellen[1]} />
               {map.routes.map((r, i) => (
                 <RouteComponent
@@ -274,9 +276,11 @@ export const PlayerControls = () => {
     playerOrder.unshift(playerOrder.pop()!);
   }
 
+  const activePlayerClasses = me === currentPlayer ? "phase-info active-player" : "phase-info";
+
   return (
     <div className={`player-controls`}>
-      <div className="phase-info">
+      <div className={activePlayerClasses}>
         {me !== currentPlayer
           ? `It's ${currentPlayer.name}'s turn`
           : phase === "Actions"
@@ -346,8 +350,11 @@ export const PlayerControls = () => {
   );
 };
 
-export const OfficeComponent = ({ office, order, city }: { office: Office | null; order: number; city: City }) => {
-  const left = Margin + order * (OfficeWidth + Margin);
+export const OfficeComponent = ({ office, order, city, isBonus }: { office: Office | null; order: number; city: City; isBonus: Boolean }) => {
+  let left = Margin + order * (OfficeWidth + Margin);
+  if (isBonus) {
+    left = (left + 40) * -1; 
+  }
   const top = (CityHeight - OfficeWidth) / 2;
 
   const { state, action } = useContext(ControllerContext).controller;
@@ -436,11 +443,14 @@ export const CityComponent = ({ cityName }: { cityName: string }) => {
   const cityWidth = (city.offices.length + extras.length) * (OfficeWidth + Margin) + Margin;
   const x = city.position[0] - cityWidth / 2;
   const y = city.position[1] - (CityHeight + FontSize / 2) / 2;
-
   const owner = state.players[cityOwner(state, cityName)];
-
   return (
     <g className="city-group" style={{ transform: `translate(${x}px,${y}px)` }}>
+      <g>
+        {city.bonusOffices.map((office, i) => (
+          <OfficeComponent key={i} office={office} order={extras.length + i} city={city} isBonus={true} />
+        ))}
+      </g>
       <g>
         <rect
           width={cityWidth}
@@ -451,10 +461,10 @@ export const CityComponent = ({ cityName }: { cityName: string }) => {
           strokeWidth="3"
         />
         {extras.map((token, i) => (
-          <OfficeComponent key={i} office={null} order={i} city={city} />
+          <OfficeComponent key={i} office={null} order={i} city={city} isBonus={false} />
         ))}
         {city.offices.map((office, i) => (
-          <OfficeComponent key={i} office={office} order={extras.length + i} city={city} />
+          <OfficeComponent key={i} office={office} order={extras.length + i} city={city} isBonus={false} />
         ))}
       </g>
       <text
@@ -686,7 +696,7 @@ const getMarkerTextAndTitle = (kind: BonusMarkerKind) => {
     title = "Move any 3 tokens occupying a trading post";
   } else if (kind === "Office") {
     text = "offc";
-    title = "Extra office in a city with at least 1 office";
+    title = "Extra office in a city with at least 1 office when completing a route";
   } else if (kind === "Swap") {
     text = "swap";
     title = "Swap one of your offices with the next one";
@@ -722,7 +732,7 @@ export const SVGMarker = ({ kind, x, y }: { kind: BonusMarkerKind; x: number; y:
 
 export const InlineMarker = ({ kind }: { kind: BonusMarkerKind }) => {
   const { controller } = useContext(ControllerContext);
-  const onClick = () => controller.action("marker-use", { kind });
+  const onClick = () => kind === "Office" ? "" : controller.action("marker-use", { kind });
   const { text, title } = getMarkerTextAndTitle(kind);
 
   return (

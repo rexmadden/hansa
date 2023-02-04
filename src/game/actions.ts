@@ -299,7 +299,7 @@ export const MovePlaceAction = (s: GameState, params: ActionParams<"move-place">
 export const RouteAction = (s: GameState, params: ActionParams<"route">) => {
   const rewards: Reward[] = [{ title: "Do nothing", action: { name: "route-empty", params: {} } }];
 
-  const { privilege, name } = getPlayer(s);
+  const { privilege, name, readyMarkers } = getPlayer(s);
   const route = s.map.routes[params.route];
   const r = s.routes[params.route];
 
@@ -314,6 +314,11 @@ export const RouteAction = (s: GameState, params: ActionParams<"route">) => {
   const nextOfficeFrom = cityFrom.offices[cFrom.tokens.length];
   const nextOfficeTo = cityTo.offices[cTo.tokens.length];
 
+  const extraOfficeMarker = readyMarkers.includes("Office");
+
+  const officeFromHasExistingOffice = cFrom.tokens.length > 0;
+  const officeToHasExistingOffice = cTo.tokens.length > 0;
+
   if (nextOfficeFrom && (!nextOfficeFrom.merch || merchants) && nextOfficeFrom.color <= privilege - 1) {
     rewards.push({
       title: `Office in ${route.from}`,
@@ -324,6 +329,18 @@ export const RouteAction = (s: GameState, params: ActionParams<"route">) => {
     rewards.push({
       title: `Office in ${route.to}`,
       action: { name: "route-office", params: { city: route.to } },
+    });
+  }
+  if (extraOfficeMarker && officeFromHasExistingOffice) {
+    rewards.push({
+      title: `Left most Office in ${route.from} (Marker)`,
+      action: { name: "marker-office", params: { cityName: route.from } },
+    });
+  }
+  if (extraOfficeMarker && officeToHasExistingOffice) {
+    rewards.push({
+      title: `Left most Office in ${route.to} (Marker)`,
+      action: { name: "marker-office", params: { cityName: route.to } },
     });
   }
   if (cityFrom.upgrade && canUpgrade(s, cityFrom.upgrade)) {
@@ -610,21 +627,6 @@ export const MarkerUseAction = (s: GameState, params: ActionParams<"marker-use">
       hand: [],
       actions: [],
     } as PhaseContext;
-  } else if (params.kind === "Office") {
-    return {
-      phase: "Office",
-      player: s.context.player,
-      prev: s.context,
-      hand: [],
-      actions: [],
-      rewards: validExtraOfficeLocations(s).map((city) => ({
-        title: `Establish an extra office in ${city}`,
-        action: {
-          name: "marker-office",
-          params: { city },
-        },
-      })),
-    } as PhaseContext;
   }
   return s.context;
 };
@@ -649,31 +651,38 @@ export const MarkerSwapAction = (s: GameState, params: ActionParams<"marker-swap
 };
 
 /**
- * Sets up an extra office in a city.
- * Tries to use a tradesman, then merchant from the general stock, then personal supply
+ * Sets up an extra office to the farthest left in a city.
+ * Tries to use a tradesman, then merchant from the completed route
  */
 export const MarkerOfficeAction = (s: GameState, params: ActionParams<"marker-office">) => {
   const player = getPlayer(s);
-  const { generalStock, personalSupply } = player;
-  let merch = false;
+  const cityName = params.cityName;
+  const cityState = s.cities[cityName];
 
-  if (generalStock.t) {
-    generalStock.t -= 1;
-  } else if (generalStock.m) {
-    generalStock.m -= 1;
-    merch = true;
-  } else if (personalSupply.t) {
-    personalSupply.t -= 1;
-  } else if (personalSupply.m) {
-    personalSupply.m -= 1;
-    merch = true;
+  const [marker] = player.readyMarkers.splice(
+    player.readyMarkers.findIndex((m) => m === "Office"),
+    1
+  );
+
+  player.usedMarkers.push(marker);
+
+  const containsTradesman = s.context.hand.some( x => x.token === "t");
+
+  s.context.hand.splice(
+    s.context.hand.findIndex((tok) => tok.token === (containsTradesman ? "t" : "m")),
+    1
+  );
+  for (const t of s.context.hand) {
+    player.generalStock[t.token] += 1;
   }
+  s.context.hand = [];
 
   // Extra offices are added from the left
-  s.cities[params.city].extras.unshift({ owner: s.context.player, merch });
+  cityState.tokens.unshift({ owner: s.context.player, merch: !containsTradesman });
+
   s.log.push({
     player: s.context.player,
-    message: `${player.name} sets up an extra office in ${params.city}`,
+    message: `${player.name} sets up an extra office in ${cityName}`,
   });
 
   if (!player.linkEastWest && areCitiesLinked(s, "Arnheim", "Stendal", s.context.player)) {
