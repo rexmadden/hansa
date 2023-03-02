@@ -142,6 +142,7 @@ export const Map = () => {
         >
           <g ref={groupRef} id="game" transform={`scale(${scale}, ${scale}) translate(${x},${y})`}>
             <CoellenBarrels x={map.coellen[0]} y={map.coellen[1]} />
+            <EastWestBonuses x={map.eastwest[0]} y={map.eastwest[1]} />
             {map.routes.map((r, i) => (
               <RouteComponent
                 key={i}
@@ -234,6 +235,7 @@ export const App = ({ gameId, playerId }: { gameId: string; playerId: string }) 
             <g ref={groupRef} id="game" transform={`scale(${scale}, ${scale}) translate(${x},${y})`}>
               {/* <image href={mapImg.src} transform={`scale(${scale}, ${scale}) translate(${x},${y})`} /> */}
               <CoellenBarrels x={map.coellen[0]} y={map.coellen[1]} />
+              <EastWestBonuses x={map.eastwest[0]} y={map.eastwest[1]} />
               {map.routes.map((r, i) => (
                 <RouteComponent
                   key={i}
@@ -353,7 +355,7 @@ export const PlayerControls = () => {
 export const OfficeComponent = ({ office, order, city, isBonus }: { office: Office | null; order: number; city: City; isBonus: Boolean }) => {
   let left = Margin + order * (OfficeWidth + Margin);
   if (isBonus) {
-    left = (left + 40) * -1; 
+    left = (left + 40) * -1;
   }
   const top = (CityHeight - OfficeWidth) / 2;
 
@@ -867,6 +869,72 @@ const CoellenBarrels = ({ x, y }: { x: number; y: number }) => {
               cx={25 + i * 35}
               cy="25"
               r="13"
+              fill={playerColor(state.players[c].color)}
+              stroke="white"
+              strokeWidth="2"
+            />
+          )
+        )
+        .filter((e) => e)}
+    </g>
+  );
+};
+
+/**
+ * Displays the Arnheim to Steinhem connection bonuses
+ */
+const EastWestBonuses = ({ x, y }: { x: number; y: number }) => {
+  const { state } = useContext(ControllerContext).controller;
+
+  return (
+    <g className="city-group" style={{ transform: `translate(${x}px, ${y}px)` }}>
+      <rect width="130" height="50" rx="6" fill="#faa" stroke="black" strokeWidth="3" />
+      <rect width="30" height="30" x="10" y="10" fill="white" stroke="black" strokeWidth="2" />
+      <rect width="30" height="30" x="50" y="10" fill="white" stroke="black" strokeWidth="2" />
+      <rect width="30" height="30" x="90" y="10" fill="white" stroke="black" strokeWidth="2" />
+
+      <text fill="black" fontSize="20" fontFamily="Monospace" fontWeight="800" letterSpacing="0em">
+        <tspan textAnchor="middle" x={25} y={32}>
+          7
+        </tspan>
+      </text>
+
+      <text fill="black" fontSize="20" fontFamily="Monospace" fontWeight="800" letterSpacing="0em">
+        <tspan textAnchor="middle" x={65} y={32}>
+          4
+        </tspan>
+      </text>
+
+      <text fill="black" fontSize="20" fontFamily="Monospace" fontWeight="800" letterSpacing="0em">
+        <tspan textAnchor="middle" x={105} y={32}>
+          2
+        </tspan>
+      </text>
+
+      <text
+        className="title"
+        fill="white"
+        stroke="black"
+        strokeWidth="5"
+        fontSize={FontSize}
+        fontFamily="Monospace"
+        fontWeight="800"
+        letterSpacing="0em"
+      >
+        <tspan textAnchor="middle" x={130/ 2} y={0}>
+          Arnheim-Stendal
+        </tspan>
+      </text>
+
+      {state.eastwest
+        .map((c, i) =>
+          c == null ? null : (
+            <rect
+              key={i}
+              x={10 + i * 40}
+              y="10"
+              width="30"
+              height="30"
               fill={playerColor(state.players[c].color)}
               stroke="white"
               strokeWidth="2"

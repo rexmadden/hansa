@@ -468,9 +468,13 @@ export const OfficeAction = (s: GameState, params: ActionParams<"route-office">)
   player.points += office.point ? 1 : 0;
 
   if (!player.linkEastWest && areCitiesLinked(s, "Arnheim", "Stendal", s.context.player)) {
-    const awardedPoints = [7, 4, 2, 0, 0][s.players.filter((p) => p.linkEastWest).length];
+    const index = s.players.filter((p) => p.linkEastWest).length
+    const awardedPoints = [7, 4, 2, 0, 0][index];
     player.points += awardedPoints;
     player.linkEastWest = true;
+    if (index < s.eastwest.length) {
+      s.eastwest[index] = s.context.player;
+    }
     s.log.push({
       player: s.context.player,
       message: `${player.name} scores ${awardedPoints} for completing the east-west route`,
@@ -686,9 +690,13 @@ export const MarkerOfficeAction = (s: GameState, params: ActionParams<"marker-of
   });
 
   if (!player.linkEastWest && areCitiesLinked(s, "Arnheim", "Stendal", s.context.player)) {
-    const awardedPoints = [7, 4, 2, 0, 0][s.players.filter((p) => p.linkEastWest).length];
+    const index = s.players.filter((p) => p.linkEastWest).length
+    const awardedPoints = [7, 4, 2, 0, 0][index];
     player.points += awardedPoints;
     player.linkEastWest = true;
+    if (index < s.eastwest.length) {
+      s.eastwest[index] = s.context.player;
+    }
     s.log.push({
       player: s.context.player,
       message: `${player.name} scores ${awardedPoints} for completing the east-west route`,

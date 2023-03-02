@@ -107,6 +107,7 @@ export type GameMap = {
   cities: { [key: string]: City };
   routes: Route[];
   coellen: [number, number];
+  eastwest: [number, number];
 };
 
 export type TokenState = {
@@ -221,6 +222,11 @@ export type GameState = {
   coellen: [number | null, number | null, number | null, number | null];
 
   /**
+   * Player index or `null` if no east-west link is made yet
+   */
+  eastwest: [number | null, number | null, number | null];
+
+  /**
    * The map we're playing
    */
   map: GameMap;
@@ -311,6 +317,7 @@ export const initGameState = (players: { [key in Color]?: string }): GameState =
       "Move 3",
     ],
     coellen: [null, null, null, null],
+    eastwest: [null, null, null],
     log: [{ player: -1, message: "A new game begins!" }],
     isOver: false,
     map,

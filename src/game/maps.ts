@@ -6,6 +6,7 @@ import { GameMap } from "./model";
  */
 const BaseMap: GameMap = {
   coellen: [100, 708],
+  eastwest: [200, 550],
   cities: {
     Groningen: {
       name: "Groningen",
@@ -29,7 +30,7 @@ const BaseMap: GameMap = {
     Arnheim: {
       name: "Arnheim",
       offices: [{ color: 0 }, { color: 0, merch: true }, { color: 1 }, { color: 2 }],
-      bonusOffices: [{ color: 0 },{ color: 0 },{ color: 0 },{ color: 0 }],
+      bonusOffices: [],
       position: [150, 450],
       color: "red",
       neighbors: [],
