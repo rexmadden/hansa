@@ -44,7 +44,7 @@ function HomePage() {
       <div className="player-conf">
         <span>Red</span>
         <input
-          maxLength={8}
+          maxLength={30}
           value={players.red || ""}
           onChange={(e) => setPlayers({ ...players, red: e.currentTarget.value })}
         />
@@ -52,7 +52,7 @@ function HomePage() {
       <div className="player-conf">
         <span>Blue</span>
         <input
-          maxLength={8}
+          maxLength={30}
           value={players.blue || ""}
           onChange={(e) => setPlayers({ ...players, blue: e.currentTarget.value })}
         />
@@ -60,7 +60,7 @@ function HomePage() {
       <div className="player-conf">
         <span>Green</span>
         <input
-          maxLength={8}
+          maxLength={30}
           value={players.green || ""}
           onChange={(e) => setPlayers({ ...players, green: e.currentTarget.value })}
         />
@@ -68,7 +68,7 @@ function HomePage() {
       <div className="player-conf">
         <span>Yellow</span>
         <input
-          maxLength={8}
+          maxLength={30}
           value={players.yellow || ""}
           onChange={(e) => setPlayers({ ...players, yellow: e.currentTarget.value })}
         />
@@ -76,7 +76,7 @@ function HomePage() {
       <div className="player-conf">
         <span>Purple</span>
         <input
-          maxLength={8}
+          maxLength={30}
           value={players.purple || ""}
           onChange={(e) => setPlayers({ ...players, purple: e.currentTarget.value })}
         />
