@@ -300,7 +300,6 @@ export const initGameState = (players: { [key in Color]?: string }): GameState =
       "Office",
       "Office",
       "Office",
-      "Office",
       "4 Actions",
       "4 Actions",
       "3 Actions",
