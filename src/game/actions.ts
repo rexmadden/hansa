@@ -678,7 +678,7 @@ export const MarkerOfficeAction = (s: GameState, params: ActionParams<"marker-of
   s.context.hand = [];
 
   // Extra offices are added from the left
-  cityState.tokens.unshift({ owner: s.context.player, merch: !containsTradesman });
+  cityState.extras.unshift({ owner: s.context.player, merch: !containsTradesman });
 
   s.log.push({
     player: s.context.player,
