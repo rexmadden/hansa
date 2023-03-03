@@ -156,7 +156,7 @@ const BaseMap: GameMap = {
     },
     Luneburg: {
       name: "Luneburg",
-      offices: [{ color: 0 }],
+      offices: [{ color: 0 , merch: true}],
       bonusOffices: [],
       position: [1450, 300],
       neighbors: [],
