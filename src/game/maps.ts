@@ -275,6 +275,7 @@ export const adjustCities4p = (map: GameMap): GameMap => {
   map.cities.Goslar.offices = [{ color: 0 }, { color: 3 }];
   map.cities.Dortmund.offices = [{ color: 0, merch: true }, { color: 1 }, { color: 2 }];
   map.cities.Gottingen.offices = [{ color: 0 }, { color: 0, merch: true }, { color: 2 }];
+  map.cities.Warburg.offices = [{ color: 1 }, { color: 2 }];
   return map;
 };
 
