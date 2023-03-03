@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { adjustCities4p } from "./maps.ts"
+import { adjustCities4p } from "./maps"
 export type Color = "red" | "blue" | "green" | "yellow" | "purple";
 export type Privilege = 0 | 1 | 2 | 3;
 export type Upgrade = "privilege" | "book" | "actions" | "keys" | "bank";
