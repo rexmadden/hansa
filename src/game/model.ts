@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { adjustCities4p } from "./maps.ts"
 export type Color = "red" | "blue" | "green" | "yellow" | "purple";
 export type Privilege = 0 | 1 | 2 | 3;
 export type Upgrade = "privilege" | "book" | "actions" | "keys" | "bank";
@@ -264,7 +265,7 @@ export const initMapState = (map: GameMap): Pick<GameState, "cities" | "routes">
 };
 
 export const initGameState = (players: { [key in Color]?: string }): GameState => {
-  const map = Object.keys(players).length > 3 ? Standard4P : Standard3P;
+  const map = Object.keys(players).length > 3 ? adjustCities4p(Standard4P) : Standard3P;
   let shuffledPlayers = shuffle(
     (Object.keys(players) as Color[]).map((color) => ({
       id: v4(),

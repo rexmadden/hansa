@@ -156,7 +156,7 @@ const BaseMap: GameMap = {
     },
     Luneburg: {
       name: "Luneburg",
-      offices: [{ color: 0 }],
+      offices: [{ color: 0 , merch: true}],
       bonusOffices: [],
       position: [1450, 300],
       neighbors: [],
@@ -265,6 +265,17 @@ export const addNeighbors = (map: GameMap): GameMap => {
       }
     }
   }
+  return map;
+};
+
+export const adjustCities4p = (map: GameMap): GameMap => {
+  map.cities.Kampen.offices = [{ color: 1, merch: true }, { color: 3 }];
+  map.cities.Bremen.offices = [{ color: 0, merch: true }, { color: 2 }];
+  map.cities.Luneburg.offices = [{ color: 1, merch: true }, { color: 3 }];
+  map.cities.Goslar.offices = [{ color: 0 }, { color: 3 }];
+  map.cities.Dortmund.offices = [{ color: 0, merch: true }, { color: 1 }, { color: 2 }];
+  map.cities.Gottingen.offices = [{ color: 0 }, { color: 0, merch: true }, { color: 2 }];
+  map.cities.Warburg.offices = [{ color: 1 }, { color: 2 }];
   return map;
 };
 
