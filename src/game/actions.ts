@@ -62,7 +62,7 @@ export const executeAction = <T extends ActionName>(
  * Ends the turn for the current player, or ends game for all if current player ended the game. 
  */
 export const DoneAction = (s: GameState) => {
-  if (!canEndTurn(s) || s.isDone) {
+  if (!canEndTurn(s) || s.context.endGame) {
     return s.context;
   }
 
