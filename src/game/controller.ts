@@ -117,7 +117,7 @@ export const useController = (gameId: string, playerId: string): GameController 
           }
         });
 
-        if (newState?.context.player !== immutableState?.context.player) {
+        if (newState?.isOver || newState?.context.player !== immutableState?.context.player) {
           sync(JSON.parse(JSON.stringify(newState)));
         }
 
